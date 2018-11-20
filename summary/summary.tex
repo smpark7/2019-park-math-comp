@@ -1,0 +1,68 @@
+\documentclass[letterpaper]{mandc2019}
+%\usepackage{graphicx}
+%\usepackage{subfigure}
+%\graphicspath{ {images/} }
+%\usepackage{enumerate}
+%\usepackage{amssymb}
+%\usepackage{mathtools}
+%\usepackage{minted}
+%\usepackage{tcolorbox}
+%\usepackage[margin=1in]{geometry}
+%\usepackage{float}
+%\usepackage{multirow}
+%\usepackage{hhline}
+%\usepackage{indentfirst}
+%\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+%\renewcommand{\arraystretch}{1.2}
+
+\usepackage{tabls}
+\usepackage{cites}
+\usepackage{epsf}
+\usepackage{appendix}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+%\usepackage{caption}
+%\captionsetup{width=1.0\textwidth,font={bf,normalsize},skip=0.3cm,within=none,justification=centering}
+
+\begin{document}
+
+\title{SUMMARY TITLE}
+\author{Sun Myung Park}
+
+\maketitle
+\justify
+
+\section{INTRODUCTION}
+
+The molten salt reactor (MSR) is one of six advanced reactor designs shortlisted by the Generation IV International Forum to coordinate and support research efforts into these next generation nuclear power designs. The six designs boast improvements over existing reactor systems in various factors including safety, energy efficiency, sustainability and cost. For MSRs in particular, 
+
+\subsection{Molten Salt Fast Reactor}
+
+
+
+\subsection{Moltres}
+
+Moltres is an open source simulation tool for simulating MSRs. It is an application code that is developed in Multiphysics Object Oriented Simulation Environment (MOOSE) \cite{gaston_physics-based_2015}, a finite-element, multiphysics framework for solving non-linear problems. Through the MOOSE framework, Moltres solves the coupled n-group neutron diffusion, temperature and delayed neutron precursor governing equations on a coarse, adaptive meshing scheme.
+
+
+
+A demonstration of Moltres has been performed by Lindsay et al. \cite{lindsay_introduction_2018} with the Molten Salt Reactor Experiment reactor design developed by Oak Ridge National Laboratory in the 1950s and 60s. The MSRE reactor is a channel-type MSR with fuel salt flowing through numerous graphite channels which also act as moderators. The pool-type MSFR differs in that it is a fast reactor that consists of a single large pool of fuel salt flowing through the center of the core, which later separates into 16 smaller loops for heat exchange, pumping and other instrumentations. 
+
+\section{METHODOLOGY}
+
+An established benchmark reactor core geometry is used in this study. This facilitates comparisons with previous MSFR studies on the same geometry for code validation of Moltres, which is the main focus of this study. Furthermore, the MSFR is still under active development and the actual geometry has not been finalised yet. More complex geometries may be considered for future research.
+
+6-group neutronics data were generated for the various regions in the reactor (fuel salt, blanket salt, structural material, etc.) using the continuous-energy Monte Carlo neutronics solver Serpent. The U/Th ratio in the fuel salt was slightly tweaked in order to obtain a keff value of 1 at 1030K, the average operating temperature of the core. The overall molar ratio of heavy metals to other nuclides in the fuel salt was conserved. Vacuum boundary conditions were assumed along the outermost walls of the core. Neutronics data was produced at 50K intervals from 900K to 1200K.
+
+\subsection{Neutronics}
+
+\subsection{Steady-state Behaviour}
+
+\section{GOALS}
+
+\setlength{\baselineskip}{12pt}
+\bibliographystyle{mandc}
+\bibliography{bibliography}
+
+\end{document}
