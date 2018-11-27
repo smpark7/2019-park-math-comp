@@ -35,23 +35,19 @@
 
 \section{INTRODUCTION}
 
-Molten salt reactors (MSR) were first developed in the 1950s and 60s as part of the Aircraft Reactor Experiment (ARE) and later the Molten Salt Reactor Experiment (MSRE) at Oak Ridge National Laboratory (ORNL). A breeder version of the MSRE design was conceptualized but never operated as funding was cut in favour of liquid metal fast-breeder reactors (LMFBR).
+Molten salt reactors (MSR) were first developed in the 1950s and 60s as part of the Aircraft Reactor Experiment (ARE) and later the Molten Salt Reactor Experiment (MSRE) at Oak Ridge National Laboratory (ORNL). A breeder version of the MSRE design was conceptualized but never operated as funding was cut in favour of liquid metal fast-breeder reactors (LMFBR) \cite{macpherson_molten_1985}.
 
-There has been a revival of interest in MSRs at the turn of the century, especially as the MSR is one of six advanced reactor designs shortlisted by the Generation IV International Forum (GIF). The GIF aims to coordinate and support research efforts into these next generation nuclear power designs. The six designs boast improvements over existing reactor systems in various factors including safety, energy efficiency, sustainability and cost \cite{doe_technology_2002}. As the name suggests, MSRs uniquely feature fissile material mixed into molten salt coolants as opposed to solid fuel forms that are physically separate from the coolant. As a consequence of having the fuel and coolant in the same medium, MSRs behave very differently in comparison to other reactor designs.
+There has been a revival of interest in MSRs at the turn of the century, especially as the MSR is one of six advanced reactor designs shortlisted by the Generation IV International Forum (GIF). The GIF aims to coordinate and support research efforts into these next generation nuclear power designs. The six designs boast improvements over existing reactor systems in various factors including safety, energy efficiency, sustainability and cost \cite{doe_technology_2002}. As the name suggests, MSRs uniquely feature fuel directly dissolved in molten salt coolants as opposed to solid fuel forms that are physically separate from the coolant. Thus, MSRs may behave very differently in comparison to other reactor designs, and these differences have a big impact on the safety and operation of MSRs.
 
-MSRs are arguably much safer than conventional nuclear reactors due to several passive safety mechanisms that make core meltdowns extremely unlikely to occur. These include 
+MSRs are arguably much safer than conventional nuclear reactors due to several passive safety mechanisms that make core meltdowns extremely unlikely to occur. These include a strong negative temperature reactivity coefficient that counteracts unprotected reactivity insertions, natural circulation loops that passively cool the reactor when active cooling systems fail, and the installation of freeze plugs that can melt and drain the fuel-containing molten salt when a temperature goes above a certain safety threshold. Certain MSR designs also operate with epithermal or fast neutron spectra which help to burn some of the plutonium which are inevitably produced when using U-235 fuel. Others such as the Molten Salt Fast Reactor (MSFR) are designed to breed fissile U-233 from Th-232, thereby gaining the advantages of running a thorium fuel cycle. 
 
- passive safety mechanism that counteracts unintended spikes in reactivity and the resulting increase in temperature within the core.
+Many simulation tools have been developed for MSRs. This summary focuses on simulation tools that have been developed and are currently under development for the MSFR. The MSFR design is rather different from the MSRE design. The MSFR operates with a fast neutron spectrum and has no need for moderators. Therefore, instead of having the graphite fuel channels like the MSRE, the center of the MSFR core simply consists of a large pool of primary molten salt coolant flowing upwards and separating into 16 coolant loops which pass through heat exchangers to transfer heat to the secondary coolant loop. The two designs are shown in Figure *. 
 
-\subsection{Molten Salt Fast Reactor}
-
-
+*** Paragraph of previous work of MSFR simulation tools ***
 
 \subsection{Moltres}
 
-Moltres is an open source simulation tool for simulating MSRs. It is an application code that is developed in Multiphysics Object Oriented Simulation Environment (MOOSE) \cite{gaston_moose:_2009}, a finite-element, multi-physics framework for solving non-linear problems. Through the MOOSE framework, Moltres solves the coupled n-group neutron diffusion, temperature and delayed neutron precursor governing equations on a coarse, adaptive meshing scheme.
-
-
+Moltres is an open source simulation tool developed for simulating MSRs. It is an application code that is developed in Multiphysics Object Oriented Simulation Environment (MOOSE) \cite{gaston_moose:_2009}, a finite-element, multi-physics framework for solving non-linear problems. Through the MOOSE framework, Moltres solves the coupled n-group neutron diffusion, temperature and delayed neutron precursor governing equations on a coarse, adaptive meshing scheme.
 
 A demonstration of Moltres has been performed by Lindsay et al. \cite{lindsay_introduction_2018} with the Molten Salt Reactor Experiment reactor design developed by Oak Ridge National Laboratory in the 1950s and 60s. The MSRE reactor is a channel-type MSR with fuel salt flowing through numerous graphite channels which also act as moderators. The pool-type MSFR differs in that it is a fast reactor that consists of a single large pool of fuel salt flowing through the center of the core, which later separates into 16 smaller loops for heat exchange, pumping and other instrumentations. 
 
