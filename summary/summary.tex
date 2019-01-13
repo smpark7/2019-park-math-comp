@@ -19,6 +19,7 @@ smpark3@illinois.edu}
 \usepackage{subcaption}
 \usepackage{enumitem}
 \usepackage{placeins}
+\usepackage{siunitx}
 \newcolumntype{c}{>{\hsize=.56\hsize}X}
 \newcolumntype{b}{>{\hsize=.7\hsize}X}
 \newcolumntype{s}{>{\hsize=.74\hsize}X}
@@ -39,7 +40,7 @@ A demonstration of Moltres has been performed by Lindsay et al. \cite{lindsay_in
 
 The logical next step in the development of Moltres is its application on other MSR designs. The MSR design of interest for this summary and the subsequent report is the Molten Salt Fast Reactor (MSFR) \cite{serp_molten_2014}. The pool-type MSFR is a fast reactor that consists of a single large pool of fuel-containing molten salt flowing upwards through the center of the core, which later separates into 16 smaller coolant loops for heat exchange, pumping and other processes before flowing back into the center. As a fast reactor, it has no need for numerous graphite moderator channels such as those found in the channel-type epithermal reactor of the MSRE.
 
-There are a number of technological gaps in the Moltres code that have to be filled in order to accurately simulate the physics present in the MSFR, especially for transient and accident scenarios. Some features that will be developed include improvements in the fluid dynamics, as Moltres can currently only handle laminar flow at predetermined velocity distributions.
+There are a number of technological gaps in the Moltres code that have to be filled in order to accurately simulate the physics present in the MSFR, especially for transient and accident scenarios. Some features that will be developed include improvements in the fluid dynamics, as Moltres can currently only handle laminar flow at predetermined velocity distributions. Radiative heat transfer is currently not accounted for, with only heat transfer through conduction and convective flow. Furthermore, there is currently no equivalent implementation of pumps in Moltres; flow velocities are user-defined. This greatly limits the study of transient scenarios involving variations in pump speed.
 
 \section{BACKGROUND OF MOLTEN SALT REACTORS}
 
@@ -47,7 +48,7 @@ There are a number of technological gaps in the Moltres code that have to be fil
 
 Molten salt reactors (MSR) were first developed in the 1950s and 60s as part of the Aircraft Reactor Experiment (ARE) and later the Molten Salt Reactor Experiment (MSRE) at Oak Ridge National Laboratory (ORNL). A breeder version of the MSRE design was conceptualized but never operated as funding was cut in favour of liquid metal fast-breeder reactors (LMFBR) \cite{macpherson_molten_1985}.
 
-There has been a revival of interest in MSRs at the turn of the century, especially as the MSR is one of six advanced reactor designs shortlisted by the Generation IV International Forum (GIF) \cite{doe_technology_2002}. The GIF aims to coordinate and support research efforts into these next generation nuclear power designs. The six designs boast improvements over existing reactor systems in various factors including safety, energy efficiency, sustainability and cost \cite{doe_technology_2002}. As the name suggests, MSRs uniquely feature fuel directly dissolved in molten salt coolants as opposed to solid fuel forms that are physically separate from the coolant. Thus, MSRs may behave very differently in comparison to other reactor designs, and these differences have a big impact on the safety and operation of MSRs. New simulation tools are required to account for the different types of physical phenomena present in MSRs, such as delayed neutron precursor drifts in the molten salt.
+%There has been a revival of interest in MSRs at the turn of the century, especially as the MSR is one of six advanced reactor designs shortlisted by the Generation IV International Forum (GIF) \cite{doe_technology_2002}. The GIF aims to coordinate and support research efforts into these next generation nuclear power designs. The six designs boast improvements over existing reactor systems in various factors including safety, energy efficiency, sustainability and cost \cite{doe_technology_2002}. As the name suggests, MSRs uniquely feature fuel directly dissolved in molten salt coolants as opposed to solid fuel forms that are physically separate from the coolant. Thus, MSRs may behave very differently in comparison to other reactor designs, and these differences have a big impact on the safety and operation of MSRs. New simulation tools are required to account for the different types of physical phenomena present in MSRs, such as delayed neutron precursor drifts in the molten salt.
 
 MSRs are arguably much safer than conventional nuclear reactors due to several passive safety mechanisms that make severe accidents extremely unlikely to occur. When core temperatures rise due to unprotected reactivity insertions, the strong negative temperature reactivity coefficients of the fuel salt limit further increases in reactivity and temperature \cite{elsheikh_safety_2013}. The coolant salts are chemically inert and do not react explosively with air or water. Fission products can be continuously removed through online chemical reprocessing and helium sparging. This reduces the radiological impact of a severe accident involving a hull breach and the release of molten salt to the environment \cite{elsheikh_safety_2013}.
 
@@ -89,30 +90,21 @@ A number of steady state and transient multiphysics simulations have been perfor
 
 More recently, a coupled tool, comprising of the thermal-hydraulics code TRACE and a multi-group 3D spatial neutronics solver PARCS, was used to run steady state and transient simulations of the MSFR \cite{pettersen_coupled_2016}. This approach allowed for a 3D model simulation of the MSFR on a coarse mesh, thus improving on the 2D axisymmetric COMSOL/TUDelft models with the benefit of much lower computation times in comparison to the CFD-OpenFOAM models. 
 
-\section{SIMULATION CODE}
+\section{SIMULATION TOOLS}
 
 Moltres is an application code developed in the MOOSE framework \cite{gaston_moose:_2009}. The MOOSE framework solves non-linear equations through the discretization of partial differential equations (PDE) on an adaptive coarse meshing scheme provided by LibMesh \cite{kirk_libmesh:_2006} and PetSc \cite{satish_balay_petsc_2015}. Individual terms of PDEs that define the physics involved in a system are represented in MOOSE (and its applications) by kernels. For example, the various terms in the neutron diffusion equation such as the diffusion term, time evolution term, etc. all have a corresponding physics kernel defined in Moltres. Boundary conditions are also handled in a similar fashion. Moltres can solve for an arbitrary number of neutronics groups as long as the relevant group constants are provided in a Moltres-compatible format.
-
-\begin{table*}[t]
-\centering
-\begin{tabular}{ l | l | l | l | l | l | l }
-Group number & 1 & 2 & 3 & 4 & 5 & 6\\
-\hline
-Neutron energy upper bound [MeV] & 7.485$\times 10^{-4}$ & 5.5308$\times 10^{-3}$ &  2.47875$\times 10^{-2}$ & 0.4979 & 2.2313 & System maximum
-\end{tabular}
-\caption{Neutron energy upper bounds used in Serpent and SCALE.}
-\label{table:bound}
-\end{table*}
 
 As mentioned in the previous Moltres study \cite{lindsay_introduction_2018}, the neutronics in Moltres is described by the time-independent multi-group neutron diffusion equation as shown in Equation \ref{eq1}.
 \begin{align}
 \frac{1}{v_g} &\frac{\partial \phi_g}{\partial t} - \nabla \cdot D_g \nabla \phi_g + \Sigma^r_g \phi_g \nonumber \\ 
 &= \sum^G_{g \neq g'} \Sigma^s_{g' \rightarrow g} \phi_{g'} + \chi^p_g \sum^G_{g'=1} (1-\beta) \nu \Sigma^f_{g'} \phi_{g'} + \chi^d_g \sum^I_i \lambda_i C_i \label{eq1}
 \end{align}
+
 The delayed neutron precursors are governed by the following equation:
 \begin{align}
 \frac{\partial C_i}{\partial t} = \sum^G_{g'=1} \beta_i \nu \Sigma^f_{g'} \phi_{g'} - \lambda_i C_i - \frac{\partial}{\partial z} u C_i \label{eq2}
 \end{align}
+
 Lastly, the governing equation for temperature in the molten salt is given by:
 \begin{align}
 \rho_f c_{p,f} \frac{\partial T_f}{\partial t} + \nabla \cdot \big( \rho_f c_{p,f} \overrightarrow{u} \cdot T_f - k_f \nabla T_f \big) = Q_f \label{eq3}
@@ -121,33 +113,69 @@ where the source term $Q_f$ is given as:
 \begin{align}
 Q_f = \sum^G_{g=1} \epsilon_{f,g} \Sigma_{f,g} \phi_g \label{eq4}
 \end{align}
+
 The governing equation for temperature in the structural components is similar to that for the molten salt, with exclusion of the advection term.
 \begin{align}
 \rho_s c_{p,s} \frac{\partial T_s}{\partial t} + \nabla \cdot \big(- k_s \nabla T_s \big) = Q_s \label{eq5}
 \end{align}
-Further research will be conducted to determine the mathematical form of $Q_s$, which is the source term in the structural components due to gamma and neutron irradiation upon these components.
 
-The group constants are to be generated on Serpent \cite{leppanen_serpent_2015} and SCALE \cite{dehart_reactor_2011}. The group constant data generated by these two codes may not necessarily agree due to differences in their implementation; Serpent is a Monte Carlo code while SCALE has both deterministic and Monte Carlo transport capabilities separately. Thus, an analysis of the two codes will be conducted to determine which set of data is more appropriate for the MSFR.
+The mathematical form of $Q_s$, which is the source term in the structural components due to gamma and neutron irradiation upon these components, is yet to be determined.
+
+The group constants are to be generated on Serpent \cite{leppanen_serpent_2015}. Serpent is a Monte Carlo code. [more info on serpent]
 
 \section{METHODOLOGY}
 
-An established benchmark reactor core geometry is used in this study. It is a 2D axisymmetric model resembling the MSFR as shown in Figure \ref{fig:benchmark}. This facilitates comparisons with previous MSFR studies by various authors \cite{fiorina_modelling_2014} \cite{pettersen_coupled_2016} on the same geometry for code validation of Moltres. Furthermore, the MSFR is still under active development and the actual geometry is expected to undergo numerous revisions with input from newer research. More complex geometries may be considered for future research. The 2D model is extended into a 3D geometry by rotating it along the central axis to form concentric cylinders, as was done by Pettersen \cite{pettersen_coupled_2016}.
+A truncated portion of an established benchmark MSFR reactor core geometry \cite{pettersen_coupled_2016} is used in this study. It is a 2D axisymmetric model as shown in Figure \ref{fig:benchmark}. This geometry focuses on the active central region of the core. Basing the geometry on the benchmark model facilitates comparisons with previous MSFR studies by various authors \cite{fiorina_modelling_2014} \cite{pettersen_coupled_2016} on the benchmark model for code validation purposes. More complete geometries may be considered for future work. For Serpent neutronics simulations, the 2D model was extended into a 3D geometry by rotating it around the central axis to form concentric cylinders, as was done by Pettersen \cite{pettersen_coupled_2016}.
 
-Six-group neutronics data will be obtained from both Serpent and SCALE. The input consists of the 3D benchmark geometry, material properties of the various components in the MSFR, the neutron energy bounds, and the temperatures at which the group constants are to be generated. Serpent is a continuous-energy Monte Carlo neutronics solver which can run on 3D geometries. As for SCALE, the NEWT module is a 2D deterministic neutronics code while the KENO module is a 3D Monte Carlo code, like Serpent (gotta double check with Andrei/SCALE manual). An analysis will be conducted to determine which of these codes produce the group constants data that is most appropriate for the MSFR benchmark model. 
+Six-group neutronics data were obtained from Serpent. The input consisted of the extended 3D geometry, material compositions and densities of the various components in the model, the neutron energy bounds, the JEFF-3.1.2 cross section library, and the temperatures at which the group constants are to be generated.
 
-The temperatures at which the neutronics solvers are run range from 900 K to 1200 K at 50 K intervals. This range covers the normal operating temperature range of the MSFR. Preliminary Serpent results are available and discussed in the next section.
+The fuel salt composition is given in table \ref{table:fuelsalt}. The fissile $^{233}$U composition is 1\% higher than that used by Pettersen \cite{pettersen_coupled_2016} to reach criticality at 1030 K with our modified geometry. The density formulae are all unchanged from the aforementioned paper. The temperatures at which Serpent was run, range from 900 K to 1200 K at 50 K intervals. This range covers the expected operating temperature range of the MSFR. The neutron energy group upper bounds are geiven in table \ref{table:bound}.
 
-Moltres automatically interpolates the temperature-specific group constants data that it is provided, such as the various neutron cross sections, in order to possess data for all temperature values in the range of 900 K - 1200 K. 
+The Serpent output data relevant to Moltres are the fission cross section, fission neutron production cross section, removal cross section, average energy deposited per fission, inverse neutron speed, average neutron yield, neutron flux, total fission spectrum, delayed fission spectrum, diffusion coefficient and scattering production matrix for each of the six neutron energy groups. Serpent also provides eight-group delayed neutron fractions and decay constants for use in Moltres. Preliminary Serpent results were obtained and are discussed in the next section.
 
-\begin{figure}[t] 
+Moltres automatically interpolates the temperature-dependent group constant data that it is provided, to obtain group constant data for all temperature values in the range of 900 K - 1200 K. 
+%
+\begin{table}[h]
+\centering
+\begin{tabular}{rr}
+{Isotope} & {Mole fraction}\\
+\hline
+$^7$Li & 29.0\\
+$^{19}$F & 62.6\\
+$^{232}$Th & 7.39\\
+$^{233}$U & 1.01
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Fuel salt composition used for the Serpent simulation.}
+\label{table:fuelsalt}
+\end{table}
+%
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+{Group number} & {Upper bound [MeV]}\\
+\hline
+1 & 7.485$\times 10^{-4}$\\
+2 & 5.5308$\times 10^{-3}$\\
+3 & 2.47875$\times 10^{-2}$\\
+4 & 0.4979\\
+5 & 2.2313\\
+6 & 20
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Neutron energy group upper bounds used in Serpent.}
+\label{table:bound}
+\end{table}
+
+\begin{figure}[h] 
 	\centering
-	\includegraphics[width=0.48\textwidth]{./figures/benchmark}
+	\includegraphics[width=0.46\textwidth]{./figures/benchmark}
 	\captionsetup{justification=centering}
-	\caption{Cross-section of the 2D axisymmetric benchmark model of the MSFR \cite{pettersen_coupled_2016}. The figure is not to scale.}
+	\caption{Cross-section of the 2D axisymmetric model used for the simulation. Derived from the 2D axisymmetric benchmark model of the MSFR \cite{pettersen_coupled_2016}. The figure is not to scale.}
 	\label{fig:benchmark}
 \end{figure} 
 
-\section{PRELIMINARY SERPENT NEUTRONICS RESULTS}
+\section{PRELIMINARY NEUTRONICS RESULTS}
 
 \noindent [Insert Serpent results and compare keff with Pettersen's results]
 
