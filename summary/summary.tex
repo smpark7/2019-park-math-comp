@@ -121,21 +121,23 @@ The governing equation for temperature in the structural components is similar t
 
 The mathematical form of $Q_s$, which is the source term in the structural components due to gamma and neutron irradiation upon these components, is yet to be determined.
 
-The group constants are to be generated on Serpent \cite{leppanen_serpent_2015}. Serpent is a Monte Carlo code. [more info on serpent]
+The group constants are to be generated on Serpent \cite{leppanen_serpent_2015}. Serpent is a versatile continuous-energy Monte Carlo code used in numerous reactor physics applications such as group cross section generation and burnup calculations.
 
 \section{METHODOLOGY}
 
 A truncated portion of an established benchmark MSFR reactor core geometry \cite{pettersen_coupled_2016} is used in this study. It is a 2D axisymmetric model as shown in Figure \ref{fig:benchmark}. This geometry focuses on the active central region of the core. Basing the geometry on the benchmark model facilitates comparisons with previous MSFR studies by various authors \cite{fiorina_modelling_2014} \cite{pettersen_coupled_2016} on the benchmark model for code validation purposes. More complete geometries may be considered for future work. For Serpent neutronics simulations, the 2D model was extended into a 3D geometry by rotating it around the central axis to form concentric cylinders, as was done by Pettersen \cite{pettersen_coupled_2016}.
 
-Six-group neutronics data were obtained from Serpent. The input consisted of the extended 3D geometry, material compositions and densities of the various components in the model, the neutron energy bounds, the JEFF-3.1.2 cross section library, and the temperatures at which the group constants are to be generated.
+Six-group neutronics data were obtained from Serpent. The input parameters consisted of the extended 3D geometry, material compositions and densities of the various components in the model, the neutron energy bounds, the JEFF-3.1.2 cross section library, and the temperatures at which the group constants are to be generated.
 
 The fuel salt composition is given in table \ref{table:fuelsalt}. The fissile $^{233}$U composition is 1\% higher than that used by Pettersen \cite{pettersen_coupled_2016} to reach criticality at 1030 K with our modified geometry. The density formulae are all unchanged from the aforementioned paper. The temperatures at which Serpent was run, range from 900 K to 1200 K at 50 K intervals. This range covers the expected operating temperature range of the MSFR. The neutron energy group upper bounds are geiven in table \ref{table:bound}.
 
 The Serpent output data relevant to Moltres are the fission cross section, fission neutron production cross section, removal cross section, average energy deposited per fission, inverse neutron speed, average neutron yield, neutron flux, total fission spectrum, delayed fission spectrum, diffusion coefficient and scattering production matrix for each of the six neutron energy groups. Serpent also provides eight-group delayed neutron fractions and decay constants for use in Moltres. Preliminary Serpent results were obtained and are discussed in the next section.
 
-Moltres automatically interpolates the temperature-dependent group constant data that it is provided, to obtain group constant data for all temperature values in the range of 900 K - 1200 K. 
+The input parameters required by Moltres include flow velocity, the number of neutron and delayed neutron precursor groups, multi-group neutronics data, the geometry mesh file, appropriate initial temperature values, neutronics and temperature boundary conditions, and material properties. Material properties include thermal conductivity, specific heat capacity and density. Moltres automatically interpolates the temperature-dependent group constant data that it is provided, to obtain group constant data values for all temperatures between 900 K and 1200 K. 
+
+The coupled neutronics and thermal-hydraulics simulation starts from the initial temperatures and is expected to converge to steady state temperature and neutron flux distributions over time for the given fuel salt composition. From this steady state, transient accident scenarios that can be studied through varying the flow velocity and fuel salt composition.
 %
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{rr}
 {Isotope} & {Mole fraction}\\
@@ -150,7 +152,7 @@ $^{233}$U & 1.01
 \label{table:fuelsalt}
 \end{table}
 %
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{ll}
 {Group number} & {Upper bound [MeV]}\\
@@ -166,18 +168,86 @@ $^{233}$U & 1.01
 \caption{Neutron energy group upper bounds used in Serpent.}
 \label{table:bound}
 \end{table}
-
-\begin{figure}[h] 
+%
+\begin{figure}[h!] 
 	\centering
 	\includegraphics[width=0.46\textwidth]{./figures/benchmark}
 	\captionsetup{justification=centering}
 	\caption{Cross-section of the 2D axisymmetric model used for the simulation. Derived from the 2D axisymmetric benchmark model of the MSFR \cite{pettersen_coupled_2016}. The figure is not to scale.}
 	\label{fig:benchmark}
 \end{figure} 
-
+%
 \section{PRELIMINARY NEUTRONICS RESULTS}
 
-\noindent [Insert Serpent results and compare keff with Pettersen's results]
+The effective multiplication factor $k_{eff}$ and temperature reactivity coefficient $\alpha_T$ values obtained from Serpent are compared with the Serpent results from Pettersen. The model used in that paper is the full 2D axisymmetric benchmark model that includes the fuel inlet and outlet, and reflectors above and below the geometry considered in our Serpent simulations.
+
+The $k_{eff}$ values obtained are shown in table \ref{table:keff}; all values have equal uncertainty values of $\pm 5$ pcm. The $k_{eff}$ at 1030 K is larger than the value reported by Pettersen by 91 pcm as shown in table \ref{table:keffcomp}. This discrepancy grows to 126 pcm at 1200 K. This may be largely due to the 0.01\% increase in mole fraction of fissile $^{233}$U and corresponding decrease in $^{232}$Th used to keep the model critical at 1030 K as compared to Pettersen's model.
+%
+\begin{align}
+\alpha = \frac{k_2 - k_1}{k_1 \Delta T} \label{eq6}
+\end{align}
+
+The $\alpha_T$ in table \ref{table:reactivity} was calculated using equation \ref{eq6} for a fair comparison with Pettersen's result, where $k_1$ and $k_2$ are the $k_{eff}$ values at 900 K and 1200 K respectively, and $\Delta T$ is 300 K. Our $\alpha_T$ values larger in magnitude by 0.12 pcm K$^{-1}$. This may also be due to the larger fissile inventory as mentioned above.
+
+It is worth noting that our model is just subcritical when using the same fuel salt composition as Pettersen. However, the $k_{eff}$ value is very close to 1 and the differences may lie in the exact isotopic compositions defined in the input parameters for Serpent. For example, Pettersen used the JEFF-3.1.1 cross section library while we utilised the JEFF-3.1.2 cross section library. Furthermore, the geometry of our models are different; our model truncates the top and bottom fuel salt inlet and outlet regions, and the reflector regions beyond those regions. This choice was made as Moltres will be using this geometry for the coupled neutronics and thermal-hydraulics studies.
+
+The discrepancies in $k_{eff}$ and $\alpha_T$ are deemed to be small, especially as the $\alpha_T$ values are within ~2\% of each other. This shows that the model we have chosen is reasonably close to the MSFR benchmark model.
+
+\section{Conclusion}
+We have outlined the methodology for the code validation of Moltres with existing results for the MSFR benchmark model. The preliminary Serpent neutronics results show that the model to be used for this code validation agrees very closely to the existing results by the comparison of the $k_{eff}$ and $\alpha_T$ values at the operating temperature of 1030 K and at the upper and lower temperature limits considered. Therefore, the proposed model is acceptable for use in the code validation of Moltres.
+%
+\begin{table}[t]
+\centering
+\begin{tabular}{ll}
+{Temperature [K]} & {$k_{eff}$}\\
+\hline
+900 & 1.01081\\
+950 & 1.00693\\
+1000 & 1.00332\\
+1030 & 1.00091\\
+1050 & 0.999482\\
+1100 & 0.995789\\
+1150 & 0.992008\\
+1200 & 0.988428
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Neutron energy group upper bounds used in Serpent.}
+\label{table:keff}
+\end{table}
+%
+\begin{table}[t]
+\centering
+\begin{tabular}{lll}
+{Source} & {$k_{eff}$ at 1030 K} & $k_{eff}$ at 1200 K\\
+\hline
+Self (Serpent) & 1.00091 & 0.988428\\
+Pettersen (Serpent) & 1.00000 & 0.98716
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Comparison of $k_{eff}$ values from our Serpent results and Pettersen's results.}
+\label{table:keffcomp}
+\end{table}
+%
+\begin{table}[t]
+\centering
+\begin{tabular}{ll}
+{Source} & {$\alpha_T$ [pcm K$^{-1}$]}\\
+\hline
+Self (Serpent) & $-7.39 \pm 0.03$\\
+Pettersen (Serpent) & $-7.27 \pm 0.02$
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Neutron energy group upper bounds used in Serpent.}
+\label{table:reactivity}
+\end{table}
+%
+\begin{figure}[h!] 
+	\centering
+	\includegraphics[width=0.48\textwidth]{./figures/reactivityplot}
+	\captionsetup{justification=centering}
+	\caption{Plot of reactivity vs temperature from Serpent.}
+	\label{fig:reactivity}
+\end{figure} 
 
 \bibliographystyle{ans}
 \bibliography{bibliography}
